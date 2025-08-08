@@ -163,8 +163,14 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
     analyserRef.current.getByteFrequencyData(dataArrayRef.current as Uint8Array<ArrayBuffer>);
     analyserRef.current.getByteTimeDomainData(timeDataRef.current as Uint8Array<ArrayBuffer>);
     
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Clear canvas completely for clean mode switching, use fade for particles mode
+    if (visualizationMode === 'particles') {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else {
+      ctx.fillStyle = 'rgb(0, 0, 0)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
     
     switch (visualizationMode) {
       case 'spectrum':
@@ -222,6 +228,19 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
       animate();
     }
   }, [isListening, animate]);
+
+  // Clear canvas immediately when switching visualization modes
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Force clear canvas when mode changes
+    ctx.fillStyle = 'rgb(0, 0, 0)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }, [visualizationMode]);
 
   return (
     <div
