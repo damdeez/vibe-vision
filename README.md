@@ -41,7 +41,7 @@ A modern web app that transforms audio into stunning real-time visualizations, f
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/vibe-vision.git
+   git clone https://github.com/damdeez/vibe-vision.git
    cd vibe-vision
    ```
 
