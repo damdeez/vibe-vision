@@ -25,7 +25,7 @@ export default function Icon() {
         }}
       >
         {/* Spectrum bars */}
-        <div style={{ display: 'flex', alignItems: 'end', gap: '1px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '1px' }}>
           <div style={{ width: '2px', height: '8px', background: '#00FF00' }} />
           <div style={{ width: '2px', height: '12px', background: '#33FF33' }} />
           <div style={{ width: '2px', height: '16px', background: '#66FF66' }} />

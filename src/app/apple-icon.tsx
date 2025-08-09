@@ -26,7 +26,7 @@ export default function AppleIcon() {
         }}
       >
         {/* Spectrum bars - larger for apple icon */}
-        <div style={{ display: 'flex', alignItems: 'end', gap: '4px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px' }}>
           <div style={{ width: '8px', height: '40px', background: '#00FF00', borderRadius: '2px' }} />
           <div style={{ width: '8px', height: '60px', background: '#33FF33', borderRadius: '2px' }} />
           <div style={{ width: '8px', height: '80px', background: '#66FF66', borderRadius: '2px' }} />
