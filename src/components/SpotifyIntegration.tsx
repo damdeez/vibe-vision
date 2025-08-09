@@ -98,13 +98,12 @@ const SpotifyIntegration = () => {
 
   return (
     <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white space-y-4 w-full md:max-w-xs">
-      <h3 className="text-lg font-bold">Spotify Integration</h3>
+      {/* <h3 className="text-lg font-bold">Spotify</h3> */}
 
       {!session ? (
         <div className="space-y-3">
           <p className="text-sm text-gray-300">
-            Connect your Spotify account to visualize your currently playing
-            music
+            Connect your Spotify account and enable the microphone to visualize your currently playing music
           </p>
           <button
             onClick={handleSignIn}
