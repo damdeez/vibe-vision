@@ -10,11 +10,11 @@ interface AudioVisualizerProps {
 
 type VisualizationMode = "spectrum" | "oscilloscope" | "bars" | "particles";
 
-const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
+const AudioVisualizer = ({
   audioSource = "microphone",
   isFullscreen = false,
   onFullscreenToggle,
-}) => {
+}: AudioVisualizerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isListening, setIsListening] = useState(false);
   const [permissionStatus, setPermissionStatus] = useState<
@@ -178,7 +178,7 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
           ctx.fill();
 
           ctx.shadowBlur = size * 2;
-          ctx.shadowColor = ctx.fillStyle as string;
+          ctx.shadowColor = String(ctx.fillStyle);
         }
       }
       ctx.shadowBlur = 0;
@@ -306,20 +306,20 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
         className="absolute inset-0 w-full h-full"
         width={typeof window !== "undefined" ? window.innerWidth : 1920}
         height={typeof window !== "undefined" ? window.innerHeight : 1080}
+        suppressHydrationWarning
       />
 
-      {/* Controls */}
       <div
         className={`absolute top-4 left-4 z-10 space-y-4 transition-opacity duration-300 ${
           isFullscreen ? "opacity-0 hover:opacity-100" : ""
         }`}
       >
-        <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 text-white">
+        <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 text-white max-w-xs">
           <div className="mb-3">
             <div className="relative">
               {/* Metallica-style logo */}
               <div
-                className="font-bold text-2xl tracking-wider transform -skew-x-12"
+                className="font-bold text-lg sm:text-2xl tracking-wider transform -skew-x-12"
                 style={{
                   fontFamily: "Impact, Arial Black, sans-serif",
                   textShadow: "2px 2px 0px #333, 4px 4px 0px #111",
@@ -334,16 +334,13 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
                 VIBE VISION
               </div>
 
-              {/* Metallic border lines */}
-              <div className="absolute -top-1 -left-1 w-full h-full border-2 border-gray-400 transform -skew-x-12 opacity-30"></div>
-              <div className="absolute -top-2 -left-2 w-full h-full border border-gray-300 transform -skew-x-12 opacity-20"></div>
-
               {/* Lightning bolt accent */}
               <div className="absolute -right-2 top-0 text-green-400 text-lg">
                 ⚡
               </div>
             </div>
           </div>
+
           <p className="text-sm mb-3 text-gray-300">
             Audio Source:{" "}
             {audioSource === "microphone" ? "🎤 Microphone" : "🎵 Spotify"}
@@ -354,9 +351,9 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
               {permissionStatus === "prompt" && (
                 <button
                   onClick={requestMicrophonePermission}
-                  className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors hover:cursor-pointer"
+                  className="w-full px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm cursor-pointer"
                 >
-                  Enable Microphone
+                  🎤 Enable Microphone
                 </button>
               )}
 
@@ -368,7 +365,7 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
                         isListening ? "bg-red-500 animate-pulse" : "bg-gray-400"
                       }`}
                     />
-                    <span className="text-sm">
+                    <span className="text-xs">
                       {isListening ? "Listening..." : "Not listening"}
                     </span>
                   </div>
@@ -376,46 +373,19 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
                   {isListening && (
                     <button
                       onClick={stopListening}
-                      className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors hover:cursor-pointer"
+                      className="w-full px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm cursor-pointer"
                     >
-                      Stop Listening
+                      ⏹️ Stop
                     </button>
                   )}
                 </div>
               )}
 
               {permissionStatus === "denied" && (
-                <div className="text-red-400 text-sm">
-                  Microphone access denied. Please enable microphone permissions
-                  in your browser settings.
+                <div className="text-red-400 text-xs">
+                  Microphone access denied. Please enable permissions in browser
+                  settings.
                 </div>
-              )}
-
-              {/* Fullscreen Toggle */}
-              {onFullscreenToggle && (
-                <button
-                  onClick={onFullscreenToggle}
-                  className="bg-black/70 backdrop-blur-s rounded-lg p-3 text-white hover:bg-gray-800 transition-colors hover:cursor-pointer"
-                  title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-                >
-                  {isFullscreen ? (
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
-                    </svg>
-                  )}
-                </button>
               )}
             </div>
           )}
@@ -423,8 +393,8 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
 
         {/* Visualization Mode Selector */}
         {isListening && (
-          <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 text-white border border-gray-700">
-            <h3 className="text-sm font-bold mb-2 text-green-400">
+          <div className="bg-black/70 backdrop-blur-sm rounded-lg p-3 text-white max-w-xs">
+            <h3 className="text-xs font-bold mb-2 text-green-400">
               Visualization Mode
             </h3>
             <div className="grid grid-cols-2 gap-2">
@@ -433,7 +403,7 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
                   <button
                     key={mode}
                     onClick={() => setVisualizationMode(mode)}
-                    className={`px-3 py-2 rounded text-sm transition-colors capitalize hover:cursor-pointer ${
+                    className={`px-2 py-1 rounded text-xs transition-colors capitalize cursor-pointer ${
                       visualizationMode === mode
                         ? "bg-green-600 text-white"
                         : "bg-gray-700 hover:bg-gray-600 text-gray-300"
@@ -445,6 +415,32 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
               )}
             </div>
           </div>
+        )}
+
+        {/* Fullscreen Toggle */}
+        {onFullscreenToggle && (
+          <button
+            onClick={onFullscreenToggle}
+            className="bg-black/70 backdrop-blur-sm rounded-lg p-3 text-white hover:bg-gray-800 transition-colors cursor-pointer"
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            {isFullscreen ? (
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
+              </svg>
+            ) : (
+              <div className="flex content-center items-center space-x-1">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+                </svg>
+                <p>Fullscreen</p>
+              </div>
+            )}
+          </button>
         )}
       </div>
     </div>

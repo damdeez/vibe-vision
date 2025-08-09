@@ -18,7 +18,10 @@ interface SpotifyCurrentlyPlaying {
 export class SpotifyService {
   private accessToken: string;
 
-  constructor(accessToken: string) {
+  constructor(accessToken: string | undefined) {
+    if (!accessToken) {
+      throw new Error('Access token is required');
+    }
     this.accessToken = accessToken;
   }
 
@@ -35,7 +38,8 @@ export class SpotifyService {
       }
 
       if (!response.ok) {
-        throw new Error(`Spotify API error: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Spotify API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
       }
 
       return await response.json();
@@ -54,7 +58,8 @@ export class SpotifyService {
       });
 
       if (!response.ok) {
-        throw new Error(`Spotify API error: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Spotify API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
       }
 
       return await response.json();
@@ -73,7 +78,8 @@ export class SpotifyService {
       });
 
       if (!response.ok) {
-        throw new Error(`Spotify API error: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Spotify API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
       }
 
       return await response.json();

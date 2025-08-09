@@ -8,7 +8,7 @@ interface SessionProviderProps {
   session?: NextAuthSessionProviderProps['session'];
 }
 
-const SessionProvider: React.FC<SessionProviderProps> = ({ children, session }) => {
+const SessionProvider = ({ children, session }: SessionProviderProps) => {
   return (
     <NextAuthSessionProvider session={session}>
       {children}
