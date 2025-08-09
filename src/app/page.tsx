@@ -41,7 +41,7 @@ export default function Home() {
           isFullscreen ? "opacity-0 hover:opacity-100" : ""
         } w-full px-4 md:w-auto md:px-0 md:right-4`}
       >
-        <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 text-white w-full md:max-w-xs">
+        {/* <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 text-white w-full md:max-w-xs">
           <h3 className="text-lg font-bold mb-3">Audio Source</h3>
           <div className="space-y-2">
             <button
@@ -65,7 +65,7 @@ export default function Home() {
               🎵 Spotify
             </button>
           </div>
-        </div>
+        </div> */}
 
         <SpotifyIntegration />
       </div>
