@@ -421,7 +421,7 @@ const AudioVisualizer = ({
       {onFullscreenToggle && (
         <button
           onClick={onFullscreenToggle}
-          className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm rounded-lg p-3 text-white hover:bg-gray-800 transition-colors cursor-pointer"
+          className="absolute bottom-48 sm:bottom-4 left-4 bg-black/70 backdrop-blur-sm rounded-lg p-3 text-white hover:bg-gray-800 transition-colors cursor-pointer"
           title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
         >
           {isFullscreen ? (
