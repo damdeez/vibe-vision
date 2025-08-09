@@ -316,13 +316,12 @@ const AudioVisualizer = ({
       >
         <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 text-white max-w-xs">
           <div className="mb-3">
-            <div className="relative">
-              {/* Metallica-style logo */}
+            <div className="flex items-center gap-2">
               <div
-                className="font-bold text-lg sm:text-2xl tracking-wider transform -skew-x-12"
+                className="font-bold text-xl sm:text-2xl tracking-wider transform -skew-x-12"
                 style={{
                   fontFamily: "Impact, Arial Black, sans-serif",
-                  textShadow: "2px 2px 0px #333, 4px 4px 0px #111",
+                  textShadow: "2px 2px 0px #474747, 4px 4px 0px #111",
                   background: "linear-gradient(145deg, #fff, #ddd, #aaa, #888)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
@@ -335,23 +334,21 @@ const AudioVisualizer = ({
               </div>
 
               {/* Lightning bolt accent */}
-              <div className="absolute -right-2 top-0 text-green-400 text-lg">
-                ⚡
-              </div>
+              <div className="text-lg">⚡</div>
             </div>
           </div>
 
-          <p className="text-sm mb-3 text-gray-300">
+          {/* <p className="text-sm mb-3 text-gray-300">
             Audio Source:{" "}
             {audioSource === "microphone" ? "🎤 Microphone" : "🎵 Spotify"}
-          </p>
+          </p> */}
 
           {audioSource === "microphone" && (
             <div className="space-y-2">
               {permissionStatus === "prompt" && (
                 <button
                   onClick={requestMicrophonePermission}
-                  className="w-full px-3 py-2 border rounded-lg transition-colors text-sm cursor-pointer"
+                  className="w-full px-3 py-2 border rounded-lg transition-colors text-sm cursor-pointer hover:opacity-80"
                 >
                   🎤 Enable Microphone
                 </button>
@@ -362,20 +359,29 @@ const AudioVisualizer = ({
                   <div className="flex items-center space-x-2">
                     <div
                       className={`w-2 h-2 rounded-full ${
-                        isListening ? "bg-red-500 animate-pulse" : "bg-gray-400"
+                        isListening
+                          ? "bg-red-500 animate-pulse"
+                          : "bg-green-500"
                       }`}
                     />
                     <span className="text-xs">
-                      {isListening ? "Listening..." : "Not listening"}
+                      {isListening ? "Listening..." : "Ready to listen"}
                     </span>
                   </div>
 
-                  {isListening && (
+                  {isListening ? (
                     <button
                       onClick={stopListening}
                       className="w-full px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm cursor-pointer"
                     >
                       ⏹️ Stop
+                    </button>
+                  ) : (
+                    <button
+                      onClick={requestMicrophonePermission}
+                      className="w-full px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm cursor-pointer"
+                    >
+                      ▶️ Start Listening
                     </button>
                   )}
                 </div>
@@ -421,7 +427,7 @@ const AudioVisualizer = ({
       {onFullscreenToggle && (
         <button
           onClick={onFullscreenToggle}
-          className="absolute bottom-48 sm:bottom-4 left-4 bg-black/70 backdrop-blur-sm rounded-lg p-3 text-white hover:bg-gray-800 transition-colors cursor-pointer"
+          className="absolute right-4 top-6 bg-black/70 backdrop-blur-sm rounded-lg p-3 text-white hover:bg-gray-800 transition-colors cursor-pointer"
           title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
         >
           {isFullscreen ? (
@@ -429,7 +435,7 @@ const AudioVisualizer = ({
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
               </svg>
-              <p>Esc</p>
+              <p>ESC</p>
             </div>
           ) : (
             <div className="flex content-center items-center space-x-1">
