@@ -1,5 +1,7 @@
 # 🎵 Vibe Vision
 
+[Check out a demo](vibe-vision.vercel.app)
+
 **See your music come alive with interactive audio visualizations**
 
 A modern web app that transforms audio into stunning real-time visualizations, featuring classic Winamp-style effects with microphone and Spotify integration.
