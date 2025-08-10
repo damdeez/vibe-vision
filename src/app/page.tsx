@@ -1,11 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import AudioVisualizer from '@/components/AudioVisualizer';
-import SpotifyIntegration from '@/components/SpotifyIntegration';
+import { useState, useEffect } from "react";
+import AudioVisualizer from "@/components/AudioVisualizer";
+import SpotifyIntegration from "@/components/SpotifyIntegration";
 
 export default function Home() {
-  const [audioSource, setAudioSource] = useState<'microphone' | 'spotify'>('microphone');
+  const [audioSource, setAudioSource] = useState<"microphone" | "spotify">(
+    "microphone"
+  );
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const toggleFullscreen = async () => {
@@ -23,8 +25,9 @@ export default function Home() {
       setIsFullscreen(!!document.fullscreenElement);
     };
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
   return (

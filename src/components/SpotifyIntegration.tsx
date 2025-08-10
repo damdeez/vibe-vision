@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { signIn, signOut, useSession } from 'next-auth/react';
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { SpotifyService } from '@/services/spotify';
+import { signIn, signOut, useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { SpotifyService } from "@/services/spotify";
 
 // Type extensions are in src/types/next-auth.d.ts
 
@@ -18,7 +18,7 @@ interface ExtendedSession {
 }
 
 function isExtendedSession(session: unknown): session is ExtendedSession {
-  return session !== null && typeof session === 'object';
+  return session !== null && typeof session === "object";
 }
 
 interface CurrentTrack {
@@ -32,42 +32,44 @@ interface CurrentTrack {
 const SpotifyIntegration = () => {
   const { data: session, status } = useSession();
   const [currentTrack, setCurrentTrack] = useState<CurrentTrack | null>(null);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (!isExtendedSession(session)) {
       return;
     }
-    
+
     const accessToken = session.accessToken;
     const sessionError = session.error;
-    
+
     if (sessionError === "RefreshAccessTokenError") {
       setError("Session expired. Please reconnect your Spotify account.");
       return;
     }
-    
+
     if (accessToken) {
-      setError(''); // Clear any previous errors
+      setError(""); // Clear any previous errors
       const spotifyService = new SpotifyService(accessToken);
-      
+
       const fetchCurrentTrack = async () => {
         try {
           const currentlyPlaying = await spotifyService.getCurrentlyPlaying();
-          
+
           if (currentlyPlaying && currentlyPlaying.item) {
             setCurrentTrack({
               name: currentlyPlaying.item.name,
-              artist: currentlyPlaying.item.artists.map(a => a.name).join(', '),
+              artist: currentlyPlaying.item.artists
+                .map((a) => a.name)
+                .join(", "),
               album: currentlyPlaying.item.album.name,
-              image: currentlyPlaying.item.album.images[0]?.url || '',
-              isPlaying: currentlyPlaying.is_playing
+              image: currentlyPlaying.item.album.images[0]?.url || "",
+              isPlaying: currentlyPlaying.is_playing,
             });
           } else {
             setCurrentTrack(null);
           }
         } catch (err) {
-          setError('Failed to fetch current track');
+          setError("Failed to fetch current track");
           console.error(err);
         }
       };
@@ -80,7 +82,7 @@ const SpotifyIntegration = () => {
   }, [session]);
 
   const handleSignIn = () => {
-    signIn('spotify');
+    signIn("spotify");
   };
 
   const handleSignOut = () => {
@@ -88,7 +90,7 @@ const SpotifyIntegration = () => {
     setCurrentTrack(null);
   };
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white w-full md:max-w-xs">
         <div className="animate-pulse">Loading...</div>
@@ -103,7 +105,8 @@ const SpotifyIntegration = () => {
       {!session ? (
         <div className="space-y-3">
           <p className="text-sm text-gray-300">
-            Connect your Spotify account and enable the microphone to visualize your currently playing music
+            Connect your Spotify account and enable the microphone to visualize
+            your currently playing music
           </p>
           <button
             onClick={handleSignIn}
@@ -129,9 +132,11 @@ const SpotifyIntegration = () => {
                 />
               )}
               <div>
-                <div className="truncate text-sm w-32">{session.user?.name}</div>
+                <div className="truncate text-sm w-32">
+                  {session.user?.name}
+                </div>
                 <div className="flex items-center gap-1 text-xs text-gray-400">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"/>
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
                   Connected
                 </div>
               </div>

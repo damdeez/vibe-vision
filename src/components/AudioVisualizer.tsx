@@ -15,14 +15,15 @@ const AudioVisualizer = ({
   isFullscreen = false,
   onFullscreenToggle,
 }: AudioVisualizerProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isListening, setIsListening] = useState(false);
   const [permissionStatus, setPermissionStatus] = useState<
     "granted" | "denied" | "prompt"
   >("prompt");
   const [visualizationMode, setVisualizationMode] =
     useState<VisualizationMode>("spectrum");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const dataArrayRef = useRef<Uint8Array | null>(null);
@@ -36,7 +37,7 @@ const AudioVisualizer = ({
       setupAudioAnalysis(stream);
       setIsListening(true);
     } catch (error) {
-      console.error("Microphone access denied:", error);
+      setErrorMsg("Microphone access denied");
       setPermissionStatus("denied");
     }
   };
@@ -284,10 +285,14 @@ const AudioVisualizer = ({
   // Clear canvas immediately when switching visualization modes
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
 
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) {
+      return;
+    }
 
     // Force clear canvas when mode changes
     ctx.fillStyle = "rgb(0, 0, 0)";
@@ -338,11 +343,6 @@ const AudioVisualizer = ({
             </div>
           </div>
 
-          {/* <p className="text-sm mb-3 text-gray-300">
-            Audio Source:{" "}
-            {audioSource === "microphone" ? "🎤 Microphone" : "🎵 Spotify"}
-          </p> */}
-
           {audioSource === "microphone" && (
             <div className="space-y-2">
               {permissionStatus === "prompt" && (
@@ -392,6 +392,10 @@ const AudioVisualizer = ({
                   Microphone access denied. Please enable permissions in browser
                   settings.
                 </div>
+              )}
+
+              {errorMsg && (
+                <div className="text-red-400 text-md mx-2">{errorMsg}</div>
               )}
             </div>
           )}

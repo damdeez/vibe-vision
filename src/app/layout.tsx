@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Vibe Vision",
-  description: "See your music come alive with interactive audio visualizations. Connect your microphone or Spotify for immersive visual experiences.",
+  description:
+    "See your music come alive with interactive audio visualizations. Connect your microphone or Spotify for immersive visual experiences.",
 };
 
 export default function RootLayout({
