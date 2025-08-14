@@ -37,6 +37,7 @@ const AudioVisualizer = ({
       setupAudioAnalysis(stream);
       setIsListening(true);
     } catch (error) {
+      console.error(error);
       setErrorMsg("Microphone access denied");
       setPermissionStatus("denied");
     }
@@ -300,7 +301,7 @@ const AudioVisualizer = ({
   }, [visualizationMode]);
 
   return (
-    <div
+    <section
       className={`relative w-full h-screen bg-black overflow-hidden ${
         isFullscreen ? "fixed inset-0 z-50" : ""
       }`}
@@ -451,7 +452,7 @@ const AudioVisualizer = ({
           )}
         </button>
       )}
-    </div>
+    </section>
   );
 };
 

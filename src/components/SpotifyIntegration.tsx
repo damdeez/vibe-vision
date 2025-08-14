@@ -29,7 +29,7 @@ interface CurrentTrack {
   isPlaying: boolean;
 }
 
-const SpotifyIntegration = () => {
+const SpotifyIntegration = ({ isFullscreen }: { isFullscreen: boolean }) => {
   const { data: session, status } = useSession();
   const [currentTrack, setCurrentTrack] = useState<CurrentTrack | null>(null);
   const [error, setError] = useState<string>("");
@@ -92,14 +92,22 @@ const SpotifyIntegration = () => {
 
   if (status === "loading") {
     return (
-      <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white w-full md:max-w-xs">
+      <section
+        className={`absolute bottom-4 z-10 space-y-4 transition-opacity duration-300 ${
+          isFullscreen ? "opacity-0 hover:opacity-100" : ""
+        } w-full px-4 md:w-auto md:px-0 md:right-4 bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white space-y-4 w-full md:max-w-xs`}
+      >
         <div className="animate-pulse">Loading...</div>
-      </div>
+      </section>
     );
   }
 
   return (
-    <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white space-y-4 w-full md:max-w-xs">
+    <section
+      className={`absolute bottom-4 z-10 space-y-4 transition-opacity duration-300 ${
+        isFullscreen ? "opacity-0 hover:opacity-100" : ""
+      } w-full px-4 md:w-auto md:px-0 md:right-4 bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white space-y-4 w-full md:max-w-xs`}
+    >
       {/* <h3 className="text-lg font-bold">Spotify</h3> */}
 
       {!session ? (
@@ -195,7 +203,7 @@ const SpotifyIntegration = () => {
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 };
 
