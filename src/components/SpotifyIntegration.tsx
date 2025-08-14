@@ -95,7 +95,7 @@ const SpotifyIntegration = ({ isFullscreen }: { isFullscreen: boolean }) => {
       <section
         className={`absolute bottom-4 z-10 space-y-4 transition-opacity duration-300 ${
           isFullscreen ? "opacity-0 hover:opacity-100" : ""
-        } w-full px-4 md:w-auto md:px-0 md:right-4 bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white space-y-4 w-full md:max-w-xs`}
+        } w-full md:w-auto md:px-0 md:right-4 bg-black/50 backdrop-blur-sm rounded-lg text-white space-y-4 w-full md:max-w-xs`}
       >
         <div className="animate-pulse">Loading...</div>
       </section>
@@ -106,12 +106,12 @@ const SpotifyIntegration = ({ isFullscreen }: { isFullscreen: boolean }) => {
     <section
       className={`absolute bottom-4 z-10 space-y-4 transition-opacity duration-300 ${
         isFullscreen ? "opacity-0 hover:opacity-100" : ""
-      } w-full px-4 md:w-auto md:px-0 md:right-4 bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white space-y-4 w-full md:max-w-xs`}
+      } w-full md:w-auto md:px-0 md:right-4 bg-black/50 backdrop-blur-sm rounded-lg text-white space-y-4 w-full md:max-w-xs`}
     >
       {/* <h3 className="text-lg font-bold">Spotify</h3> */}
 
       {!session ? (
-        <div className="space-y-3">
+        <div className="space-y-3 p-4">
           <p className="text-sm text-gray-300">
             Connect your Spotify account and enable the microphone to visualize
             your currently playing music
@@ -127,7 +127,7 @@ const SpotifyIntegration = ({ isFullscreen }: { isFullscreen: boolean }) => {
           </button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {session.user?.image && (
