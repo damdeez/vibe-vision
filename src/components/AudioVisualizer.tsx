@@ -8,7 +8,16 @@ interface AudioVisualizerProps {
   onFullscreenToggle?: () => void;
 }
 
-type VisualizationMode = "spectrum" | "oscilloscope" | "bars" | "particles";
+const VisualizationModes = [
+  "spectrum",
+  "oscilloscope",
+  "bars",
+  "particles",
+] as const;
+
+type VisualizationMode = (typeof VisualizationModes)[number];
+
+type PermissionStatus = "granted" | "denied" | "prompt";
 
 const AudioVisualizer = ({
   audioSource = "microphone",
@@ -16,9 +25,8 @@ const AudioVisualizer = ({
   onFullscreenToggle,
 }: AudioVisualizerProps) => {
   const [isListening, setIsListening] = useState(false);
-  const [permissionStatus, setPermissionStatus] = useState<
-    "granted" | "denied" | "prompt"
-  >("prompt");
+  const [permissionStatus, setPermissionStatus] =
+    useState<PermissionStatus>("prompt");
   const [visualizationMode, setVisualizationMode] =
     useState<VisualizationMode>("spectrum");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -201,7 +209,9 @@ const AudioVisualizer = ({
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) {
+      return;
+    }
 
     analyserRef.current.getByteFrequencyData(
       dataArrayRef.current as Uint8Array<ArrayBuffer>
@@ -256,7 +266,9 @@ const AudioVisualizer = ({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
 
     const handleResize = () => {
       canvas.width = window.innerWidth;
@@ -409,21 +421,19 @@ const AudioVisualizer = ({
               Visualization Mode
             </h3>
             <div className="grid grid-cols-2 gap-2">
-              {(["spectrum", "oscilloscope", "bars", "particles"] as const).map(
-                (mode) => (
-                  <button
-                    key={mode}
-                    onClick={() => setVisualizationMode(mode)}
-                    className={`px-2 py-1 rounded text-xs transition-colors capitalize cursor-pointer ${
-                      visualizationMode === mode
-                        ? "bg-green-600 text-white"
-                        : "bg-gray-700 hover:bg-gray-600 text-gray-300"
-                    }`}
-                  >
-                    {mode}
-                  </button>
-                )
-              )}
+              {VisualizationModes.map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setVisualizationMode(mode)}
+                  className={`px-2 py-1 rounded text-xs transition-colors capitalize cursor-pointer ${
+                    visualizationMode === mode
+                      ? "bg-green-600 text-white"
+                      : "bg-gray-700 hover:bg-gray-600 text-gray-300"
+                  }`}
+                >
+                  {mode}
+                </button>
+              ))}
             </div>
           </div>
         )}

@@ -33,8 +33,6 @@ export default function Home() {
         isFullscreen={isFullscreen}
         onFullscreenToggle={toggleFullscreen}
       />
-
-      {/* Audio Source Selector and Spotify Auth */}
       <SpotifyIntegration isFullscreen={isFullscreen} />
     </main>
   );

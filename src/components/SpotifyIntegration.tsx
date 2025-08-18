@@ -10,6 +10,7 @@ import { SpotifyService } from "@/services/spotify";
 interface ExtendedSession {
   accessToken?: string;
   error?: string;
+  expires: string;
   user?: {
     name?: string;
     email?: string;
@@ -17,8 +18,10 @@ interface ExtendedSession {
   };
 }
 
-function isExtendedSession(session: unknown): session is ExtendedSession {
-  return session !== null && typeof session === "object";
+function isExtendedSession(
+  session: ReturnType<typeof useSession>["data"]
+): session is ExtendedSession {
+  return session !== null && "accessToken" in session;
 }
 
 interface CurrentTrack {
@@ -48,7 +51,7 @@ const SpotifyIntegration = ({ isFullscreen }: { isFullscreen: boolean }) => {
     }
 
     if (accessToken) {
-      setError(""); // Clear any previous errors
+      setError("");
       const spotifyService = new SpotifyService(accessToken);
 
       const fetchCurrentTrack = async () => {
