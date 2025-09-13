@@ -3,7 +3,13 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { SpotifyService } from "@/services/spotify";
+import { useFetchWrapper } from "@/hooks/useFetchWrapper";
+import { 
+  SpotifyCurrentlyPlaying, 
+  SPOTIFY_API_BASE, 
+  spotifyEndpoints, 
+  createSpotifyHeaders 
+} from "@/services/spotify";
 
 // Type extensions are in src/types/next-auth.d.ts
 
@@ -21,7 +27,7 @@ interface ExtendedSession {
 function isExtendedSession(
   session: ReturnType<typeof useSession>["data"]
 ): session is ExtendedSession {
-  return session !== null && "accessToken" in session;
+  return session !== null && session !== undefined && "accessToken" in session;
 }
 
 interface CurrentTrack {
@@ -36,6 +42,18 @@ const SpotifyIntegration = ({ isFullscreen }: { isFullscreen: boolean }) => {
   const { data: session, status } = useSession();
   const [currentTrack, setCurrentTrack] = useState<CurrentTrack | null>(null);
   const [error, setError] = useState<string>("");
+
+  // Use useFetchWrapper for fetching currently playing track
+  const { data: currentlyPlaying, error: fetchError, refetch } = useFetchWrapper<SpotifyCurrentlyPlaying | null>(
+    spotifyEndpoints.currentlyPlaying,
+    {
+      headers: isExtendedSession(session) ? createSpotifyHeaders(session.accessToken!) : undefined,
+    },
+    {
+      immediate: false, // We'll trigger this manually
+      baseURL: SPOTIFY_API_BASE,
+    }
+  );
 
   useEffect(() => {
     if (!isExtendedSession(session)) {
@@ -52,25 +70,10 @@ const SpotifyIntegration = ({ isFullscreen }: { isFullscreen: boolean }) => {
 
     if (accessToken) {
       setError("");
-      const spotifyService = new SpotifyService(accessToken);
-
+      
       const fetchCurrentTrack = async () => {
         try {
-          const currentlyPlaying = await spotifyService.getCurrentlyPlaying();
-
-          if (currentlyPlaying && currentlyPlaying.item) {
-            setCurrentTrack({
-              name: currentlyPlaying.item.name,
-              artist: currentlyPlaying.item.artists
-                .map((a) => a.name)
-                .join(", "),
-              album: currentlyPlaying.item.album.name,
-              image: currentlyPlaying.item.album.images[0]?.url || "",
-              isPlaying: currentlyPlaying.is_playing,
-            });
-          } else {
-            setCurrentTrack(null);
-          }
+          await refetch();
         } catch (err) {
           setError("Failed to fetch current track");
           console.error(err);
@@ -82,7 +85,29 @@ const SpotifyIntegration = ({ isFullscreen }: { isFullscreen: boolean }) => {
 
       return () => clearInterval(interval);
     }
-  }, [session]);
+  }, [session, refetch]);
+
+  // Update currentTrack when data changes
+  useEffect(() => {
+    if (fetchError) {
+      setError("Failed to fetch current track");
+      return;
+    }
+
+    if (currentlyPlaying && currentlyPlaying.item) {
+      setCurrentTrack({
+        name: currentlyPlaying.item.name,
+        artist: currentlyPlaying.item.artists
+          .map((a) => a.name)
+          .join(", "),
+        album: currentlyPlaying.item.album.name,
+        image: currentlyPlaying.item.album.images[0]?.url || "",
+        isPlaying: currentlyPlaying.is_playing,
+      });
+    } else {
+      setCurrentTrack(null);
+    }
+  }, [currentlyPlaying, fetchError]);
 
   const handleSignIn = () => {
     signIn("spotify");

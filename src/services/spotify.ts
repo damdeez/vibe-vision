@@ -1,4 +1,5 @@
-interface SpotifyTrack {
+// Spotify API Types
+export interface SpotifyTrack {
   id: string;
   name: string;
   artists: Array<{ name: string }>;
@@ -9,101 +10,51 @@ interface SpotifyTrack {
   preview_url: string | null;
 }
 
-interface SpotifyCurrentlyPlaying {
+export interface SpotifyCurrentlyPlaying {
   is_playing: boolean;
   item: SpotifyTrack | null;
   progress_ms: number;
 }
 
-export class SpotifyService {
-  private accessToken: string;
+export interface SpotifyAudioFeatures {
+  danceability: number;
+  energy: number;
+  valence: number;
+  tempo: number;
+  loudness: number;
+  acousticness: number;
+  instrumentalness: number;
+  liveness: number;
+  speechiness: number;
+}
 
-  constructor(accessToken: string | undefined) {
-    if (!accessToken) {
-      throw new Error("Access token is required");
-    }
-    this.accessToken = accessToken;
-  }
+export interface SpotifyPlaylist {
+  id: string;
+  name: string;
+  description: string;
+  tracks: {
+    total: number;
+  };
+  images: Array<{ url: string }>;
+}
 
-  async getCurrentlyPlaying(): Promise<SpotifyCurrentlyPlaying | null> {
-    try {
-      const response = await fetch(
-        "https://api.spotify.com/v1/me/player/currently-playing",
-        {
-          headers: {
-            Authorization: `Bearer ${this.accessToken}`,
-          },
-        }
-      );
+export interface SpotifyPlaylistsResponse {
+  items: SpotifyPlaylist[];
+  total: number;
+}
 
-      if (response.status === 204) {
-        return null;
-      }
+// Spotify API endpoints and utilities
+export const SPOTIFY_API_BASE = "https://api.spotify.com/v1";
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          `Spotify API error: ${response.status} - ${
-            errorData.error?.message || "Unknown error"
-          }`
-        );
-      }
+export const spotifyEndpoints = {
+  currentlyPlaying: "/me/player/currently-playing",
+  audioFeatures: (trackId: string) => `/audio-features/${trackId}`,
+  userPlaylists: "/me/playlists",
+} as const;
 
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching currently playing track:", error);
-      return null;
-    }
-  }
-
-  async getAudioFeatures(trackId: string) {
-    try {
-      const response = await fetch(
-        `https://api.spotify.com/v1/audio-features/${trackId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.accessToken}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          `Spotify API error: ${response.status} - ${
-            errorData.error?.message || "Unknown error"
-          }`
-        );
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching audio features:", error);
-      return null;
-    }
-  }
-
-  async getUserPlaylists() {
-    try {
-      const response = await fetch("https://api.spotify.com/v1/me/playlists", {
-        headers: {
-          Authorization: `Bearer ${this.accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          `Spotify API error: ${response.status} - ${
-            errorData.error?.message || "Unknown error"
-          }`
-        );
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching user playlists:", error);
-      return null;
-    }
-  }
+export function createSpotifyHeaders(accessToken: string) {
+  return {
+    Authorization: `Bearer ${accessToken}`,
+    "Content-Type": "application/json",
+  };
 }

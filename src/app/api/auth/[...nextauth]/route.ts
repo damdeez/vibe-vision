@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import { Session } from 'next-auth';
 import SpotifyProvider from 'next-auth/providers/spotify';
+import { serverFetchForm, ServerFetchError } from '@/utils/serverFetch';
 
 // Type extensions are in src/types/next-auth.d.ts
 
@@ -12,28 +13,24 @@ interface OAuthAccount {
   [key: string]: unknown;
 }
 
+interface TokenResponse {
+  access_token: string;
+  expires_in: number;
+  refresh_token?: string;
+  error?: string;
+}
+
 async function refreshAccessToken(token: JWT) {
   try {
-    const url = "https://accounts.spotify.com/api/token";
-    
-    const response = await fetch(url, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
+    const refreshedTokens = await serverFetchForm<TokenResponse>(
+      "https://accounts.spotify.com/api/token",
+      {
         client_id: process.env.SPOTIFY_CLIENT_ID!,
         client_secret: process.env.SPOTIFY_CLIENT_SECRET!,
         grant_type: "refresh_token",
         refresh_token: token.refreshToken!,
-      }),
-      method: "POST",
-    });
-
-    const refreshedTokens = await response.json();
-
-    if (!response.ok) {
-      throw refreshedTokens;
-    }
+      }
+    );
 
     return {
       ...token,
@@ -43,6 +40,11 @@ async function refreshAccessToken(token: JWT) {
     };
   } catch (error) {
     console.error("Error refreshing access token", error);
+    
+    // Log more detailed error information if it's a ServerFetchError
+    if (error instanceof ServerFetchError) {
+      console.error("Status:", error.status, "Body:", error.body);
+    }
 
     return {
       ...token,
