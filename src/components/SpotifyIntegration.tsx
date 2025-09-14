@@ -21,7 +21,7 @@ interface ExtendedSession {
 function isExtendedSession(
   session: ReturnType<typeof useSession>["data"]
 ): session is ExtendedSession {
-  return session !== null && "accessToken" in session;
+  return session !== null && session ? "accessToken" in session : false;
 }
 
 interface CurrentTrack {
@@ -57,16 +57,17 @@ const SpotifyIntegration = ({ isFullscreen }: { isFullscreen: boolean }) => {
       const fetchCurrentTrack = async () => {
         try {
           const currentlyPlaying = await spotifyService.getCurrentlyPlaying();
+          const track = currentlyPlaying?.item;
 
-          if (currentlyPlaying && currentlyPlaying.item) {
+          if (track) {
             setCurrentTrack({
-              name: currentlyPlaying.item.name,
-              artist: currentlyPlaying.item.artists
+              name: track.name,
+              artist: track.artists
                 .map((a) => a.name)
                 .join(", "),
-              album: currentlyPlaying.item.album.name,
-              image: currentlyPlaying.item.album.images[0]?.url || "",
-              isPlaying: currentlyPlaying.is_playing,
+              album: track.album.name,
+              image: track.album.images[0]?.url || "",
+              isPlaying: currentlyPlaying?.is_playing ?? false,
             });
           } else {
             setCurrentTrack(null);
@@ -111,8 +112,6 @@ const SpotifyIntegration = ({ isFullscreen }: { isFullscreen: boolean }) => {
         isFullscreen ? "opacity-0 hover:opacity-100" : ""
       } w-full md:w-auto md:px-0 md:right-4 bg-black/50 backdrop-blur-sm rounded-lg text-white space-y-4 w-full md:max-w-xs`}
     >
-      {/* <h3 className="text-lg font-bold">Spotify</h3> */}
-
       {!session ? (
         <div className="space-y-3 p-4">
           <p className="text-sm text-gray-300">
